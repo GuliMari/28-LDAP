@@ -1,0 +1,77 @@
+---
+- name: Base set up
+  hosts: all
+  become: true
+  vars_files:
+  - defaults/main.yml
+  tasks:
+  - name: Update packages
+    ansible.builtin.yum:
+      update_cache: true
+  
+  - name: Configure firewalld
+    ansible.posix.firewalld:
+      service: "{{ item }}"
+      permanent: true
+      state: enabled
+    with_items:
+      - freeipa-ldap
+      - freeipa-ldaps
+      - http
+      - https
+      - kerberos
+      - kpasswd
+      - dns
+
+  - name: Restart firewalld
+    ansible.builtin.systemd:
+      name: firewalld
+      state: restarted
+      enabled: true
+
+  - name: Disable SElinux
+    ansible.posix.selinux:
+      state: disabled
+  
+  - name: Set up timezone
+    community.general.timezone:
+      name: "Europe/Moscow"
+  
+  - name: Enable chrony
+    ansible.builtin.systemd:
+      name: chronyd
+      state: restarted
+      enabled: true
+  
+  - name: Change /etc/hosts
+    ansible.builtin.template:
+      src: hosts.j2
+      dest: /etc/hosts
+      owner: root
+      group: root
+      mode: 0644
+  - name: Configure ipa-server
+    when: "'server' in group_names"
+    block: 
+      - name: Install module ipa-server
+        ansible.builtin.yum:
+          name:
+            - ipa-server
+            - nss
+          state: latest
+        
+      - name: Add host to ipa-server
+        shell: ipa-server-install -U -r {{ realm_name }} -n {{ domain_name }} -p {{ ipa_manager_password }} -a {{ admin_password }} --hostname={{ server_hostname }} --mkhomedir --no-ntp
+
+  - name: Configure ipa-client
+    when: "'clients' in group_names"
+    block:
+      - name: Install module ipa-client
+        ansible.builtin.yum:
+          name:
+            - freeipa-client
+          state: latest
+
+      - name: Add host to ipa-client
+        shell: ipa-client-install -U -p {{ principal }} --domain={{ domain_name }} --server={{ server_hostname }}  -w {{ admin_password  }} --no-ntp --mkhomedir 
+...

@@ -1,0 +1,8 @@
+ipa_manager_password: manager2023
+server_hostname: ipa.otus.lan
+realm_name: OTUS.LAN 
+domain_name: otus.lan
+admin_password: admin1234
+
+principal: admin
+client_pass: user2023
