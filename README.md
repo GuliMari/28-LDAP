@@ -1,1 +1,26 @@
-# 28-LDAP
+# 28-LDAP:
+1. Установить FreeIPA;
+2. Написать Ansible playbook для конфигурации клиента;
+3. Настроить аутентификацию по SSH-ключам*
+4. Firewall должен быть включен на сервере и на клиенте*
+
+Настраиваем сервер и 2 клиента с помощью `ansible`. 
+Проверяем доступность веб-интерфейса FreeIPA:
+![Image alt]()
+Добавляем пользователя через веб-интерфейс:
+![Image alt]()
+
+Проверяем настройки `client1` и `client2`:
+```bash
+[root@client1 ~]# kinit ouser
+Password for ouser@OTUS.LAN: 
+Password expired.  You must change it now.
+Enter new password: 
+Enter it again: 
+...
+
+[root@client2 ~]# kinit ouser
+Password for ouser@OTUS.LAN: 
+[root@client2 ~]# 
+
+```
