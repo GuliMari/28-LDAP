@@ -7,7 +7,7 @@
 Настраиваем сервер и 2 клиента с помощью `ansible`. 
 Проверяем доступность веб-интерфейса FreeIPA:    
 ![Image alt](https://github.com/GuliMari/28-LDAP/blob/main/web_ipa.png)
-Добавляем пользователя через веб-интерфейс:
+Добавляем пользователя через веб-интерфейс:    
 ![Image alt](https://github.com/GuliMari/28-LDAP/blob/main/user.png)
 
 Проверяем настройки `client1` и `client2`:
